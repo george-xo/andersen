@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { UiButtonAppearance, UiButtonPriority, UiButtonType } from './button.model';
+import { UiButtonPriority, UiButtonType } from './button.model';
 import { UiSpinnerComponent } from '../spinner/spinner.component';
 
 @Component({
@@ -15,5 +15,8 @@ export class UiButtonComponent {
   public readonly type = input<UiButtonType>('button');
   public readonly disabled = input(false);
   public readonly loading = input(false);
-  public readonly appearance = input<UiButtonAppearance>('filled');
+  public readonly pending = input(false);
+
+  protected readonly isDisabled = computed(() => this.disabled() || this.pending());
+  protected readonly isLoading = computed(() => this.loading() || this.pending());
 }

@@ -23,9 +23,7 @@ export const authTokenInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown
         return;
       }
 
-      const shouldReadToken = AUTH_TOKEN_RESPONSE_CONFIG.some(
-        ({ method, urlPart }) => req.method === method && req.url.endsWith(urlPart),
-      );
+      const shouldReadToken = AUTH_TOKEN_RESPONSE_CONFIG.some(({ method, urlPart }) => req.method === method && req.url.endsWith(urlPart));
 
       if (!shouldReadToken) {
         return;

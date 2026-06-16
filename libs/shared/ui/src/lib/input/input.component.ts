@@ -5,12 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
-import {
-  UiInputType,
-  UiPasswordVisibilityConfig,
-  UiPasswordVisibilityIconType,
-  UiPasswordVisibilityState,
-} from './input.model';
+import { UiInputType, UiPasswordVisibilityConfig, UiPasswordVisibilityIconType, UiPasswordVisibilityState } from './input.model';
 import { DEFAULT_PASSWORD_VISIBILITY_CONFIG } from './password-visibility.config';
 
 @Component({

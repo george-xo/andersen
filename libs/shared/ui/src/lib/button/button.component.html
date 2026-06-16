@@ -1,16 +1,15 @@
 <button
-  [matButton]="appearance()"
+  matButton="filled"
   [type]="type()"
-  [disabled]="disabled() || loading()"
+  [disabled]="isDisabled()"
   class="ui-button"
   [class.ui-button--secondary]="priority() === 'secondary'"
-  [class.ui-button--loading]="loading()"
 >
-  <span class="ui-button__content" [class.ui-button__content--hidden]="loading()">
+  <span class="ui-button__content" [class.ui-button__content--hidden]="isLoading()">
     <ng-content />
   </span>
 
-  @if (loading()) {
+  @if (isLoading()) {
     <span class="ui-button__spinner">
       <ui-spinner size="small" />
     </span>

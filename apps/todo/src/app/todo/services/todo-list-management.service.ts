@@ -1,34 +1,29 @@
 import { Injectable } from '@angular/core';
 
-import { TodoCollectionState } from '../core/todo-collection-state';
+import { EMPTY, Observable } from 'rxjs';
+
 import { ITodo } from '../core/todo.models';
+import { TodoManagementService } from './todo-management.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class TodoListManagementService extends TodoCollectionState {
-  public createTodo(name: string): ITodo | null {
-    let todo: ITodo | null = null;
+export class TodoListManagementService extends TodoManagementService {
+  public addTodo(name: string): Observable<ITodo[]> {
+    const normalizedName = this.normalizeName(name);
 
-    this.withNormalizedName(name, (normalizedName) => {
-      todo = this.createNamedItem<ITodo>({
+    if (!normalizedName) {
+      return EMPTY;
+    }
+
+    return this.mutateAndReloadTodos(
+      this.todoApiService.createTodo({
         name: normalizedName,
-        tasks: [],
-      });
-    });
-
-    return todo;
+      }),
+    );
   }
 
-  public addTodo(todos: ITodo[], todo: ITodo): ITodo[] {
-    return this.addItem(todos, todo);
-  }
-
-  public deleteTodo(todos: ITodo[], todoId: string): ITodo[] {
-    return this.deleteItem(todos, todoId);
-  }
-
-  public updateTodo(todos: ITodo[], todoId: string, updater: (todo: ITodo) => ITodo): ITodo[] {
-    return this.updateItem(todos, todoId, updater);
+  public deleteTodo(todoId: string): Observable<ITodo[]> {
+    return this.mutateAndReloadTodos(this.todoApiService.deleteTodo(todoId));
   }
 }

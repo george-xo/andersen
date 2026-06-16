@@ -1,6 +1,10 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
-import { ITodo, ITodoTaskFullEvent, ITodoTaskNameEvent, ITodoTaskTargetEvent } from '../core/todo.models';
+import { NotificationService } from '@andersen/shared-ui';
+
+import { MonoTypeOperatorFunction, Observable, catchError, pipe, tap, throwError } from 'rxjs';
+
+import { ITodo, ITodoTask, ITodoTaskFullEvent, ITodoTaskNameEvent, ITodoTaskTargetEvent } from '../core/todo.models';
 import { TodoListManagementService } from './todo-list-management.service';
 import { TodoTaskManagementService } from './todo-task-management.service';
 
@@ -8,79 +12,55 @@ import { TodoTaskManagementService } from './todo-task-management.service';
   providedIn: 'root',
 })
 export class TodoService {
+  private readonly notificationService = inject(NotificationService);
   private readonly todoListManagementService = inject(TodoListManagementService);
   private readonly todoTaskManagementService = inject(TodoTaskManagementService);
 
-  private readonly todoItems = signal<ITodo[]>([]);
-
-  public readonly todos = this.todoItems.asReadonly();
-
-  public addTodo(name: string): void {
-    const todo = this.todoListManagementService.createTodo(name);
-
-    if (!todo) {
-      return;
-    }
-
-    this.todoItems.update((todos) => this.todoListManagementService.addTodo(todos, todo));
+  public loadTodos(): Observable<ITodo[]> {
+    return this.todoListManagementService.loadTodos().pipe(this.notificationErrorOperator('Failed to load todos'));
   }
 
-  public deleteTodo(todoId: string): void {
-    this.todoItems.update((todos) => this.todoListManagementService.deleteTodo(todos, todoId));
+  public addTodo(name: string): Observable<ITodo[]> {
+    return this.todoListManagementService.addTodo(name).pipe(this.notify('Todo added successfully', 'Failed to add todo'));
   }
 
-  public addTask({ todoId, name }: ITodoTaskNameEvent): void {
-    const task = this.todoTaskManagementService.createTask(name);
-
-    if (!task) {
-      return;
-    }
-
-    this.updateTodo(todoId, (todo) => ({
-      ...todo,
-      tasks: this.todoTaskManagementService.addTask(todo.tasks, task),
-    }));
+  public deleteTodo(todoId: string): Observable<ITodo[]> {
+    return this.todoListManagementService.deleteTodo(todoId).pipe(this.notify('Todo deleted successfully', 'Failed to delete todo'));
   }
 
-  public deleteTask({ todoId, taskId }: ITodoTaskTargetEvent): void {
-    this.updateTodo(todoId, (todo) => ({
-      ...todo,
-      tasks: this.todoTaskManagementService.deleteTask(todo.tasks, taskId),
-    }));
+  public addTask(event: ITodoTaskNameEvent): Observable<ITodo[]> {
+    return this.todoTaskManagementService.addTask(event).pipe(this.notificationErrorOperator('Failed to add task'));
   }
 
-  public toggleTaskCompleted({ todoId, taskId }: ITodoTaskTargetEvent): void {
-    this.updateTask(todoId, taskId, (task) => ({
-      ...task,
-      completed: !task.completed,
-    }));
+  public deleteTask(event: ITodoTaskTargetEvent): Observable<ITodo[]> {
+    return this.todoTaskManagementService.deleteTask(event).pipe(this.notify('Task deleted successfully', 'Failed to delete task'));
   }
 
-  public updateTaskName({ todoId, taskId, name }: ITodoTaskFullEvent): void {
-    const updatedTask = this.todoTaskManagementService.createTask(name);
-
-    if (!updatedTask) {
-      return;
-    }
-
-    this.updateTask(todoId, taskId, (task) => ({
-      ...task,
-      name: updatedTask.name,
-    }));
+  public toggleTaskCompleted(event: ITodoTaskTargetEvent, task: ITodoTask): Observable<ITodo[]> {
+    return this.todoTaskManagementService.toggleTaskCompleted(event, task).pipe(this.notificationErrorOperator('Failed to update task'));
   }
 
-  private updateTodo(todoId: string, updater: (todo: ITodo) => ITodo): void {
-    this.todoItems.update((todos) => this.todoListManagementService.updateTodo(todos, todoId, updater));
+  public updateTaskName(event: ITodoTaskFullEvent, task: ITodoTask): Observable<ITodo[]> {
+    return this.todoTaskManagementService
+      .updateTaskName(event, task)
+      .pipe(this.notify('Task updated successfully', 'Failed to update task'));
   }
 
-  private updateTask(
-    todoId: string,
-    taskId: string,
-    updater: Parameters<TodoTaskManagementService['updateTask']>[2],
-  ): void {
-    this.updateTodo(todoId, (todo) => ({
-      ...todo,
-      tasks: this.todoTaskManagementService.updateTask(todo.tasks, taskId, updater),
-    }));
+  private notificationSuccessOperator<T>(message: string): MonoTypeOperatorFunction<T> {
+    return tap(() => {
+      this.notificationService.success(message);
+    });
+  }
+
+  private notificationErrorOperator<T>(message: string): MonoTypeOperatorFunction<T> {
+    return catchError((error: unknown) => {
+      this.notificationService.error(message);
+
+      return throwError(() => error);
+    });
+  }
+
+  private notify<T>(successMessage: string, errorMessage: string): MonoTypeOperatorFunction<T> {
+    return pipe(this.notificationSuccessOperator<T>(successMessage), this.notificationErrorOperator<T>(errorMessage));
   }
 }

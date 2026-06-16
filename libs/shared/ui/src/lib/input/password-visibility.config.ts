@@ -1,9 +1,4 @@
-import {
-  UiInputType,
-  UiPasswordVisibilityConfig,
-  UiPasswordVisibilityIconType,
-  UiPasswordVisibilityState,
-} from './input.model';
+import { UiInputType, UiPasswordVisibilityConfig, UiPasswordVisibilityIconType, UiPasswordVisibilityState } from './input.model';
 
 export const PASSWORD_VISIBILITY_SVG_ICON_PATH = {
   Lock: '/assets/icons/lock.svg',

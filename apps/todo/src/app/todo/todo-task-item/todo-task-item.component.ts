@@ -17,6 +17,7 @@ export class TodoTaskItemComponent {
   private readonly formBuilder = inject(NonNullableFormBuilder);
 
   public readonly task = input.required<ITodoTask>();
+  public readonly isLoading = input(false);
 
   public readonly deleteTask = output<string>();
   public readonly completedChange = output<string>();
@@ -43,7 +44,7 @@ export class TodoTaskItemComponent {
   }
 
   protected saveEdit(): void {
-    if (this.editForm.invalid) {
+    if (this.editForm.invalid || this.isLoading()) {
       this.editForm.markAllAsTouched();
       return;
     }

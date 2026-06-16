@@ -23,9 +23,7 @@ export function passwordPolicyValidator(control: AbstractControl): ValidationErr
   const hasNumber = /\d/.test(value);
   const hasSpecialCharacter = /[^A-Za-z0-9]/.test(value);
 
-  return hasMinimumLength && hasEnoughUppercaseLetters && hasNumber && hasSpecialCharacter
-    ? null
-    : { [PASSWORD_POLICY_ERROR_KEY]: true };
+  return hasMinimumLength && hasEnoughUppercaseLetters && hasNumber && hasSpecialCharacter ? null : { [PASSWORD_POLICY_ERROR_KEY]: true };
 }
 
 export function passwordsMatchValidator(passwordControlName: string, repeatPasswordControlName: string): ValidatorFn {

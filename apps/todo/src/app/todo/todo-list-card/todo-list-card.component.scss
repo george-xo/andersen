@@ -1,7 +1,23 @@
 .todo-list-card {
+  position: relative;
   min-height: var(--ui-card-height-md);
   padding: var(--ui-spacing-md);
+  overflow: hidden;
   background: var(--ui-color-white);
+
+  &--loading {
+    pointer-events: none;
+  }
+
+  &__loader {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ui-color-blur);
+  }
 
   &__header {
     margin-bottom: var(--ui-spacing-md);
@@ -24,11 +40,9 @@
 
   &__tasks {
     margin-top: var(--ui-spacing-md);
-    padding-top: var(--ui-spacing-md);
-
-    box-shadow: 0 2px 8px rgb(0 0 0 / 30%);
-    border-radius: var(--ui-radius-md);
     padding: var(--ui-radius-md);
+    border-radius: var(--ui-radius-md);
+    box-shadow: var(--ui-shadow-md);
 
     app-todo-task-item {
       display: block;
