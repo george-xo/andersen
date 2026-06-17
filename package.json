@@ -5,7 +5,8 @@
   "scripts": {
     "start:login": "npx nx serve login",
     "test:login": "npx nx test login",
-    "start:todo": "npx nx serve todo"
+    "start:todo": "npx nx serve todo",
+    "test:todo": "npx nx test todo"
   },
   "private": true,
   "dependencies": {
