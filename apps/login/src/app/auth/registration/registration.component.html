@@ -5,12 +5,7 @@
 
   <ui-input label="Login" [type]="uiInputType.Text" [control]="controls.username" />
 
-  <ui-input
-    label="Password"
-    [type]="uiInputType.Password"
-    [control]="controls.password"
-    [errorMessages]="passwordErrorMessages"
-  />
+  <ui-input label="Password" [type]="uiInputType.Password" [control]="controls.password" [errorMessages]="passwordErrorMessages" />
 
   <div class="registration__password-check">
     <ui-input label="Repeat Password" [type]="uiInputType.Password" [control]="controls.repeatPassword" />
@@ -20,7 +15,5 @@
     }
   </div>
 
-  <ui-button type="submit" [loading]="isRegistrationPending()" [disabled]="registrationForm.invalid"
-    >Register</ui-button
-  >
+  <ui-button type="submit" [loading]="isRegistrationPending()" [disabled]="registrationForm.invalid">Register</ui-button>
 </form>

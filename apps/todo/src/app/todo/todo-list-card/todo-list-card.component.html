@@ -1,31 +1,39 @@
 @let controls = taskForm.controls;
 
-<mat-card class="todo-list-card">
+<mat-card class="todo-list-card" [class.todo-list-card--loading]="isLoading()">
   <mat-card-header class="todo-list-card__header">
     <mat-card-title class="todo-list-card__title">{{ todo().name }}</mat-card-title>
   </mat-card-header>
 
   <mat-card-content class="todo-list-card__content">
-    <form class="todo-list-card__task-form" [formGroup]="taskForm" (ngSubmit)="onAddTask()">
+    <form class="todo-list-card__task-form" [formGroup]="taskForm" #taskFormDirective="ngForm" (ngSubmit)="onAddTask(taskFormDirective)">
       <ui-input label="Task Description" [type]="uiInputType.Text" [control]="controls.name" />
 
-      <ui-button type="submit" [disabled]="taskForm.invalid" appearance="tonal">Add Task</ui-button>
+      <ui-button type="submit" appearance="tonal" [disabled]="taskForm.invalid || isLoading()">Add Task</ui-button>
     </form>
   </mat-card-content>
 
   <mat-card-actions class="todo-list-card__actions">
-    <ui-button priority="secondary" type="button" (click)="onDeleteTodo()">Delete List</ui-button>
+    <ui-button priority="secondary" type="button" [disabled]="isLoading()" (click)="onDeleteTodo()">Delete List</ui-button>
   </mat-card-actions>
+
   @if (todo().tasks.length) {
     <div class="todo-list-card__tasks">
       @for (task of todo().tasks; track task.id) {
         <app-todo-task-item
           [task]="task"
+          [isLoading]="isLoading()"
           (deleteTask)="onDeleteTask($event)"
           (completedChange)="onToggleTaskCompleted($event)"
           (updateTask)="onUpdateTask($event)"
         />
       }
+    </div>
+  }
+
+  @if (isLoading()) {
+    <div class="todo-list-card__loader">
+      <ui-spinner size="small" />
     </div>
   }
 </mat-card>

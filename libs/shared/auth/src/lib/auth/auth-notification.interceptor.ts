@@ -1,11 +1,4 @@
-import {
-  HttpErrorResponse,
-  HttpEvent,
-  HttpHandlerFn,
-  HttpInterceptorFn,
-  HttpRequest,
-  HttpResponse,
-} from '@angular/common/http';
+import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpInterceptorFn, HttpRequest, HttpResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { EMPTY, catchError, tap, throwError } from 'rxjs';
 
@@ -23,9 +16,7 @@ export const authNotificationInterceptor: HttpInterceptorFn = (req: HttpRequest<
         return;
       }
 
-      const config = AUTH_SUCCESS_NOTIFICATION_CONFIG.find(
-        ({ method, urlPart }) => req.method === method && req.url.endsWith(urlPart),
-      );
+      const config = AUTH_SUCCESS_NOTIFICATION_CONFIG.find(({ method, urlPart }) => req.method === method && req.url.endsWith(urlPart));
 
       if (!config) {
         return;

@@ -1,12 +1,10 @@
 import { Provider } from '@angular/core';
 
-import { AUTH_TOKEN_STORAGE } from '@andersen/auth';
-
-import { AuthSessionService } from '../services/auth-session.service';
+import { AUTH_TOKEN_STORAGE, AuthTokenStorageService } from '@andersen/auth';
 
 export const AUTH_PROVIDERS: Provider[] = [
   {
     provide: AUTH_TOKEN_STORAGE,
-    useExisting: AuthSessionService,
+    useExisting: AuthTokenStorageService,
   },
 ];

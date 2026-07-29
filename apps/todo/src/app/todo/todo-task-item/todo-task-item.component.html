@@ -1,7 +1,7 @@
 @let controls = editForm.controls;
 
 <div class="todo-task-item">
-  <mat-checkbox class="todo-task-item__checkbox" [checked]="task().completed" (change)="onCompletedChange()" />
+  <mat-checkbox class="todo-task-item__checkbox" [checked]="task().completed" [disabled]="isLoading()" (change)="onCompletedChange()" />
 
   <div class="todo-task-item__body">
     @if (isEditing()) {
@@ -9,8 +9,9 @@
         <ui-input label="Task Description" [type]="uiInputType.Text" [control]="controls.name" />
 
         <div class="todo-task-item__actions todo-task-item__actions-save">
-          <ui-button type="submit" appearance="filled" [disabled]="editForm.invalid">Save</ui-button>
-          <ui-button type="button" appearance="outlined" (click)="cancelEdit()">Cancel</ui-button>
+          <ui-button type="submit" appearance="filled" [disabled]="editForm.invalid || isLoading()"> Save </ui-button>
+
+          <ui-button type="button" appearance="outlined" (click)="cancelEdit()"> Cancel </ui-button>
         </div>
       </form>
     } @else {
@@ -19,8 +20,9 @@
       </span>
 
       <div class="todo-task-item__actions">
-        <ui-button type="button" appearance="tonal" (click)="startEdit()">Edit</ui-button>
-        <ui-button type="button" appearance="text" (click)="onDeleteTask()">Delete</ui-button>
+        <ui-button type="button" appearance="tonal" [disabled]="isLoading()" (click)="startEdit()"> Edit </ui-button>
+
+        <ui-button type="button" appearance="text" [disabled]="isLoading()" (click)="onDeleteTask()"> Delete </ui-button>
       </div>
     }
   </div>
